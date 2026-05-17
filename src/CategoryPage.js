@@ -2,6 +2,7 @@ import React from 'react';
 import './CategoryPage.css';
 import { useParams } from 'react-router-dom';
 import { categoryData } from './categoryData';
+import { useStateValue } from './StateProvider';
 import axios from './axios';
 import StarIcon from '@mui/icons-material/Star';
 import StarHalfIcon from '@mui/icons-material/StarHalf';
@@ -9,6 +10,7 @@ import StarOutlineIcon from '@mui/icons-material/StarOutline';
 
 function CategoryPage() {
     const { slug } = useParams();
+    const [{ currency }] = useStateValue();
     const [products, setProducts] = React.useState([]);
     const [loading, setLoading] = React.useState(true);
     const category = categoryData[slug];
@@ -129,11 +131,18 @@ function CategoryPage() {
                                         <span className="cat_reviewCount">{(product.reviews || 0).toLocaleString()}</span>
                                     </div>
                                     {product.boughtCount && <div className="cat_boughtCount">{product.boughtCount}</div>}
-                                    <div className="cat_price">
-                                        <span className="cat_priceSymbol">$</span>
-                                        <span className="cat_priceWhole">{Math.floor(product.price)}</span>
-                                        <span className="cat_priceFraction">{(product.price % 1).toFixed(2).split('.')[1]}</span>
-                                    </div>
+                                    {(() => {
+                                        const convertedPrice = product.price * (currency?.rate || 1.0);
+                                        const whole = Math.floor(convertedPrice);
+                                        const frac = (convertedPrice % 1).toFixed(2).split('.')[1];
+                                        return (
+                                            <div className="cat_price">
+                                                <span className="cat_priceSymbol">{currency?.symbol || '$'}</span>
+                                                <span className="cat_priceWhole">{whole}</span>
+                                                <span className="cat_priceFraction">{frac}</span>
+                                            </div>
+                                        );
+                                    })()}
                                     <div className="cat_delivery">
                                         FREE delivery <b>Tomorrow</b>
                                     </div>

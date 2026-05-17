@@ -3,10 +3,15 @@ import './Order.css';
 import moment from 'moment';
 import CheckoutProduct from './CheckoutProduct';
 
+import { useStateValue } from './StateProvider';
+
 function Order({ order }) {
+  const [{ currency }] = useStateValue();
   const basket = order.data.basket || [];
   const amount = order.data.amount;
   const created = order.data.created;
+
+  const convertedTotal = (amount / 100) * (currency?.rate || 1.0);
 
   return (
     <div className='order'>
@@ -21,7 +26,7 @@ function Order({ order }) {
           <div className="order_headerBlock">
             <span className="order_label">TOTAL</span>
             <span className="order_value order_total">
-              ${(amount / 100).toFixed(2)}
+              {currency?.symbol || '$'}{convertedTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </span>
           </div>
           <div className="order_headerBlock">

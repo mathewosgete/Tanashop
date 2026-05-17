@@ -4,7 +4,7 @@ import { useStateValue } from './StateProvider';
 import { Link } from 'react-router-dom';
 
 function CheckoutProduct({ id, image, title, price, rating, quantity, hideButton }) {
-  const [, dispatch] = useStateValue();
+  const [{ currency }, dispatch] = useStateValue();
 
   const removeOne = () => dispatch({ type: 'REMOVE_FROM_BASKET', id });
   const addOne = () => dispatch({ type: 'ADD_TO_BASKET', item: { id, title, image, price, rating, quantity: 1 } });
@@ -14,8 +14,9 @@ function CheckoutProduct({ id, image, title, price, rating, quantity, hideButton
     }
   };
 
-  const priceWhole = Math.floor(price);
-  const priceFraction = (price % 1).toFixed(2).substring(2);
+  const convertedPrice = price * (currency?.rate || 1.0);
+  const priceWhole = Math.floor(convertedPrice);
+  const priceFraction = (convertedPrice % 1).toFixed(2).substring(2);
 
   return (
     <div className='checkoutProduct'>
@@ -29,7 +30,7 @@ function CheckoutProduct({ id, image, title, price, rating, quantity, hideButton
         </Link>
 
         <div className="checkoutProduct_price">
-          <span className="checkoutProduct_priceSymbol">$</span>
+          <span className="checkoutProduct_priceSymbol">{currency?.symbol || '$'}</span>
           <span className="checkoutProduct_priceWhole">{priceWhole}</span>
           <span className="checkoutProduct_priceFraction">{priceFraction}</span>
         </div>

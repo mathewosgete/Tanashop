@@ -10,7 +10,13 @@ const getInitialBasket = () => {
 export const initialState = {
     basket: getInitialBasket(),
     user: null,
-    searchQuery: ''
+    searchQuery: '',
+    currency: {
+        code: 'ETB',
+        symbol: 'Br',
+        name: 'Ethiopian Birr',
+        rate: 115.0 // 1 USD = 115 ETB
+    }
 };
 
 const reducer = (state, action) => {
@@ -69,6 +75,12 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 searchQuery: action.query
+            };
+
+        case 'SET_CURRENCY':
+            return {
+                ...state,
+                currency: action.currency
             };
 
         default: 

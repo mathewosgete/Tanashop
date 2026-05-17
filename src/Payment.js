@@ -7,7 +7,7 @@ import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import axios from './axios';
 
 function Payment() {
-  const [{ basket, user }, dispatch] = useStateValue();
+  const [{ basket, user, currency }, dispatch] = useStateValue();
   const navigate = useNavigate();
 
   const stripe = useStripe();
@@ -21,6 +21,7 @@ function Payment() {
 
   const total = basket.reduce((sum, item) => sum + item.price * (item.quantity || 1), 0);
   const totalItems = basket.reduce((sum, item) => sum + (item.quantity || 1), 0);
+  const convertedTotal = total * (currency?.rate || 1.0);
 
   useEffect(() => {
     const getClientSecret = async () => {
@@ -143,14 +144,14 @@ function Payment() {
 
               <div className='payment_summary'>
                 <p>
-                  Order total: <strong>${total.toFixed(2)}</strong>
+                  Order total: <strong>{currency?.symbol || '$'}{convertedTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>
                 </p>
                 <button
                   type="submit"
                   disabled={processing || disabled || succeeded || basket.length === 0}
                   className="payment_submitBtn"
                 >
-                  {processing ? 'Processing…' : succeeded ? 'Order Placed!' : `Place your order ($${total.toFixed(2)})`}
+                  {processing ? 'Processing…' : succeeded ? 'Order Placed!' : `Place your order (${currency?.symbol || '$'}${convertedTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })})`}
                 </button>
               </div>
             </form>

@@ -5,7 +5,7 @@ import { useStateValue } from './StateProvider';
 import { Link, useLocation } from 'react-router-dom';
 
 function Footer() {
-  const [{ user }] = useStateValue();
+  const [{ user, currency }] = useStateValue();
   const location = useLocation();
   const isRegistryPage = location.pathname === '/registry';
 
@@ -58,8 +58,8 @@ function Footer() {
           </span>
           <div className="footer_settings">
               <span className="footer_settingItem"><LanguageIcon fontSize="small" className="footer_settingIcon"/> English</span>
-              <span className="footer_settingItem">$ USD - U.S. Dollar</span>
-              <span className="footer_settingItem"><img src="https://upload.wikimedia.org/wikipedia/en/a/a4/Flag_of_the_United_States.svg" alt="US" className="footer_settingFlag"/>United States</span>
+              <span className="footer_settingItem">{currency?.symbol || 'Br'} {currency?.code || 'ETB'} - {currency?.name || 'Ethiopian Birr'}</span>
+              <span className="footer_settingItem"><img src="https://upload.wikimedia.org/wikipedia/commons/7/71/Flag_of_Ethiopia.svg" alt="ET" className="footer_settingFlag"/>Ethiopia</span>
           </div>
         </div>
       </div>

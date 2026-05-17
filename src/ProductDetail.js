@@ -7,7 +7,7 @@ import './ProductDetail.css';
 function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [, dispatch] = useStateValue();
+  const [{ currency }, dispatch] = useStateValue();
   const [product, setProduct] = useState(null);
   const [qty, setQty] = useState(1);
 
@@ -44,8 +44,9 @@ function ProductDetail() {
     navigate('/payment');
   };
 
-  const priceWhole = Math.floor(product.price);
-  const priceFraction = (product.price % 1).toFixed(2).substring(2);
+  const convertedPrice = product.price * (currency?.rate || 1.0);
+  const priceWhole = Math.floor(convertedPrice);
+  const priceFraction = (convertedPrice % 1).toFixed(2).substring(2);
 
   const relatedProducts = productsData
     .filter(p => p.category === product.category && p.id !== product.id)
@@ -100,7 +101,7 @@ function ProductDetail() {
 
           <div className="productDetail_priceBlock">
             <span className="productDetail_label">Price: </span>
-            <span className="productDetail_priceSymbol">$</span>
+            <span className="productDetail_priceSymbol">{currency?.symbol || '$'}</span>
             <span className="productDetail_priceWhole">{priceWhole}</span>
             <span className="productDetail_priceFraction">{priceFraction}</span>
           </div>
@@ -134,7 +135,7 @@ function ProductDetail() {
         <div className="productDetail_right">
           <div className="productDetail_buyBox">
             <div className="productDetail_buyPrice">
-              <span className="productDetail_priceSymbol">$</span>
+              <span className="productDetail_priceSymbol">{currency?.symbol || '$'}</span>
               <span className="productDetail_priceWhole">{priceWhole}</span>
               <span className="productDetail_priceFraction">{priceFraction}</span>
             </div>
@@ -155,7 +156,7 @@ function ProductDetail() {
             )}
 
             <div className="productDetail_location">
-              <span>📍 Deliver to <strong>United States</strong></span>
+              <span>📍 Deliver to <strong>Ethiopia</strong></span>
             </div>
 
             <div className="productDetail_stock inStock">In Stock</div>

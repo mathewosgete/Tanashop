@@ -14,7 +14,7 @@ import { Link } from 'react-router-dom';
 import { useStateValue } from './StateProvider';
 
 function Header() {
-    const [{ basket, user }, dispatch] = useStateValue();
+    const [{ basket, user, currency }, dispatch] = useStateValue();
     const [searchInput, setSearchInput] = useState('');
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [activeMenu, setActiveMenu] = useState('main');
@@ -129,13 +129,45 @@ function Header() {
                                 </ul>
                                 <hr />
                                 <div className="header_languageDropdownTitle">Change currency</div>
-                                <div className="header_currencySelect">
-                                    <span>$ - USD - US Dollar</span>
-                                    <a href="#currency-change" className="header_currencyLearn">Learn more</a>
+                                <div className="header_currencySelect" style={{ padding: '8px 0' }}>
+                                    <select 
+                                        className="header_currencyDropdownSelect"
+                                        value={currency?.code || 'ETB'}
+                                        onChange={(e) => {
+                                            const list = [
+                                                { code: 'ETB', symbol: 'Br', name: 'Ethiopian Birr', rate: 115.0 },
+                                                { code: 'USD', symbol: '$', name: 'US Dollar', rate: 1.0 },
+                                                { code: 'EUR', symbol: '€', name: 'Euro', rate: 0.92 },
+                                                { code: 'GBP', symbol: '£', name: 'British Pound', rate: 0.78 },
+                                                { code: 'AED', symbol: 'د.إ', name: 'UAE Dirham', rate: 3.67 },
+                                            ];
+                                            const selected = list.find(c => c.code === e.target.value);
+                                            dispatch({
+                                                type: 'SET_CURRENCY',
+                                                currency: selected
+                                            });
+                                        }}
+                                        style={{
+                                            width: '100%',
+                                            padding: '6px',
+                                            borderRadius: '4px',
+                                            border: '1px solid #bdc1c6',
+                                            backgroundColor: '#f8f9fa',
+                                            fontSize: '13px',
+                                            cursor: 'pointer',
+                                            outline: 'none'
+                                        }}
+                                    >
+                                        <option value="ETB">Br - ETB - Ethiopian Birr</option>
+                                        <option value="USD">$ - USD - US Dollar</option>
+                                        <option value="EUR">€ - EUR - Euro</option>
+                                        <option value="GBP">£ - GBP - British Pound</option>
+                                        <option value="AED">د.إ - AED - UAE Dirham</option>
+                                    </select>
                                 </div>
                                 <hr />
                                 <div className="header_languageDropdownFooter">
-                                    <img src="https://upload.wikimedia.org/wikipedia/en/a/a4/Flag_of_the_United_States.svg" alt="US Flag" className="header_flag" />
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/71/Flag_of_Ethiopia.svg" alt="ET Flag" className="header_flag" />
                                     <span>You are shopping on Tanashop.com</span>
                                 </div>
                             </div>
@@ -267,7 +299,7 @@ function Header() {
                         <ul>
                             <li>Your Account</li>
                             <li><LanguageIcon fontSize="small" className="header_sidebarIcon" /> English</li>
-                            <li><img src="https://upload.wikimedia.org/wikipedia/en/a/a4/Flag_of_the_United_States.svg" alt="US" className="header_sidebarFlag"/> United States</li>
+                            <li><img src="https://upload.wikimedia.org/wikipedia/commons/7/71/Flag_of_Ethiopia.svg" alt="ET" className="header_sidebarFlag"/> Ethiopia</li>
                             <li>Customer Service</li>
                             <Link to="/login" onClick={() => { setIsSidebarOpen(false); handleAuthentication(); }} style={{ textDecoration: 'none', color: 'inherit' }}>
                                 <li>{user ? 'Sign Out' : 'Sign in'}</li>

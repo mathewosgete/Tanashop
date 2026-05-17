@@ -4,12 +4,14 @@ import { useStateValue } from './StateProvider';
 import { useNavigate } from 'react-router-dom';
 
 function Subtotal() {
-  const [{ basket }] = useStateValue();
+  const [{ basket, currency }] = useStateValue();
   const navigate = useNavigate();
 
   const total = basket.reduce((sum, item) => sum + item.price * (item.quantity || 1), 0);
   const totalItems = basket.reduce((sum, item) => sum + (item.quantity || 1), 0);
   const hasPrime = basket.some(item => item.isPrime !== false);
+
+  const convertedTotal = total * (currency?.rate || 1.0);
 
   return (
     <div className='subtotal'>
@@ -22,7 +24,7 @@ function Subtotal() {
 
       <div className="subtotal_price">
         Subtotal ({totalItems} {totalItems === 1 ? 'item' : 'items'}):
-        <strong className="subtotal_amount"> ${total.toFixed(2)}</strong>
+        <strong className="subtotal_amount"> {currency?.symbol || '$'}{convertedTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>
       </div>
 
       <div className="subtotal_giftOption">

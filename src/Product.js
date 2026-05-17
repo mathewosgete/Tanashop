@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useStateValue } from './StateProvider';
 
 function Product({ id, title, image, price, rating, reviews, isPrime }) {
-  const [, dispatch] = useStateValue();
+  const [{ currency }, dispatch] = useStateValue();
   const navigate = useNavigate();
 
   const addToBasket = (e) => {
@@ -15,8 +15,9 @@ function Product({ id, title, image, price, rating, reviews, isPrime }) {
     navigate('/added-to-cart', { state: { product: item } });
   };
 
-  const priceWhole = Math.floor(price);
-  const priceFraction = (price % 1).toFixed(2).substring(2);
+  const convertedPrice = price * (currency?.rate || 1.0);
+  const priceWhole = Math.floor(convertedPrice);
+  const priceFraction = (convertedPrice % 1).toFixed(2).substring(2);
 
   const ratingStars = (r) => {
     const full = Math.floor(r);
@@ -53,7 +54,7 @@ function Product({ id, title, image, price, rating, reviews, isPrime }) {
 
         <div className="product_priceRow">
           <div className="product_priceBlock">
-            <span className="product_priceSymbol">$</span>
+            <span className="product_priceSymbol">{currency?.symbol || '$'}</span>
             <span className="product_priceWhole">{priceWhole}</span>
             <span className="product_priceFraction">{priceFraction}</span>
           </div>
