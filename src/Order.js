@@ -1,37 +1,66 @@
-import React from 'react'
-import './Order.css'
-import moment from 'moment'
-import CheckoutProduct from './CheckoutProduct'
-import { NumericFormat } from 'react-number-format'
+import React from 'react';
+import './Order.css';
+import moment from 'moment';
+import CheckoutProduct from './CheckoutProduct';
 
-function Order({order}) {
+function Order({ order }) {
+  const basket = order.data.basket || [];
+  const amount = order.data.amount;
+  const created = order.data.created;
+
   return (
     <div className='order'>
-        <h2>Order</h2>
-        <p>{moment.unix(order.data.created).format('MMMM Do YYYY, h:mma')}</p>
-        <p className='order_id'>
-            <small>{order.id}</small>
-        </p>
-        {order.data.basket?.map((item) => (
-            <CheckoutProduct 
-            id={item.id}
-            title={item.title}
-            image={item.image}
-            price={item.price}
-            rating={item.rating}
-            hideButton
-        />
-        ))}
-        <NumericFormat 
-            renderText={(value) => <h3>Order Total: {value}</h3>}
-            decimalScale={2}
-            value={order.data.amount / 100}
-            displayType={'text'}
-            thousandSeparator={true}
-            prefix={'$'}
-        />
+      <div className="order_header">
+        <div className="order_headerLeft">
+          <div className="order_headerBlock">
+            <span className="order_label">ORDER PLACED</span>
+            <span className="order_value">
+              {moment.unix(created).format('MMMM D, YYYY')}
+            </span>
+          </div>
+          <div className="order_headerBlock">
+            <span className="order_label">TOTAL</span>
+            <span className="order_value order_total">
+              ${(amount / 100).toFixed(2)}
+            </span>
+          </div>
+          <div className="order_headerBlock">
+            <span className="order_label">SHIP TO</span>
+            <span className="order_value order_shipto">Your address</span>
+          </div>
+        </div>
+        <div className="order_headerRight">
+          <span className="order_label">ORDER # {order.id}</span>
+          <a href="#order-details" className="order_detailsLink">View order details</a>
+        </div>
+      </div>
+
+      <div className="order_body">
+        <div className="order_status">
+          <span className="order_deliveredTag">Delivered</span>
+          <p className="order_deliveredDate">
+            Your package was delivered{' '}
+            {moment.unix(created).add(3, 'days').format('dddd, MMMM D')}
+          </p>
+        </div>
+
+        <div className="order_items">
+          {basket.map((item, i) => (
+            <CheckoutProduct
+              key={item.id + i}
+              id={item.id}
+              title={item.title}
+              image={item.image}
+              price={item.price}
+              rating={item.rating}
+              quantity={item.quantity}
+              hideButton
+            />
+          ))}
+        </div>
+      </div>
     </div>
-  )
+  );
 }
 
-export default Order
+export default Order;

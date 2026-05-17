@@ -1,27 +1,111 @@
-.ad_checkout {
-    width: 100%;
-}
-.checkout_title {
-    margin-right: 10px;
-    padding: 10px;
-    border-bottom: 1px solid lightgray;
-}
-
 .checkout {
-    display: flex;
-    justify-content: space-evenly;
-    font-size: 24px;
-    font-family: Arial, Helvetica, sans-serif;
-    padding: 20px;
-    background-color: #fff;
-    height: max-content;
-    gap: 20px;
+  display: flex;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 0 20px;
+  align-items: flex-start;
 }
 
-/* .checkout_left {
-    flex: 3 1 75%;
+/* ── Left panel ── */
+.checkout_left {
+  flex: 1;
+  background: white;
+  border-radius: 4px;
+  padding: 20px;
 }
 
+.checkout_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+  margin-bottom: 5px;
+}
+
+.checkout_mainTitle {
+  font-size: 28px;
+  font-weight: 400;
+  color: #0f1111;
+}
+
+.checkout_deselect {
+  font-size: 14px;
+  color: #007185;
+  cursor: pointer;
+}
+
+.checkout_deselect:hover {
+  text-decoration: underline;
+  color: #c45500;
+}
+
+.checkout_labelRow {
+  text-align: right;
+  font-size: 14px;
+  color: #565959;
+  padding: 5px 0 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.checkout_total {
+  text-align: right;
+  font-size: 18px;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+  color: #0f1111;
+}
+
+/* ── Empty cart ── */
+.checkout_empty {
+  padding: 30px 0;
+}
+
+.checkout_empty h2 {
+  font-size: 22px;
+  font-weight: 400;
+  color: #0f1111;
+  margin-bottom: 10px;
+}
+
+.checkout_empty p {
+  font-size: 14px;
+  color: #565959;
+  margin-bottom: 20px;
+  max-width: 500px;
+}
+
+.checkout_shopBtn {
+  display: inline-block;
+  background: var(--amz-button-bg);
+  border: 1px solid #FCD200;
+  border-radius: 20px;
+  padding: 8px 20px;
+  font-size: 14px;
+  color: #0f1111;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.checkout_shopBtn:hover {
+  background-color: var(--amz-button-hover);
+}
+
+/* ── Right panel ── */
 .checkout_right {
-    flex: 1 1 25%;
-} */
+  flex: 0 0 300px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 700px) {
+  .checkout {
+    flex-direction: column;
+  }
+  .checkout_right {
+    flex: none;
+    width: 100%;
+  }
+}

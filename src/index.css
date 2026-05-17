@@ -1,3 +1,29 @@
+:root {
+  --amz-dark: #131921;
+  --amz-dark-belt: #232f3e;
+  --amz-orange: #febd69;
+  --amz-button-bg: #ffd814;
+  --amz-button-hover: #f7ca00;
+  --amz-link: #007185;
+  --amz-text: #0f1111;
+  --amz-bg: #eaeded;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
-    background-color: lightgray;
+  background-color: var(--amz-bg);
+  font-family: "Tanashop Ember", Arial, sans-serif;
+  color: var(--amz-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
 }

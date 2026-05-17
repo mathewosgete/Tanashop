@@ -1,79 +1,146 @@
-import React, { useState } from 'react'
-import {Link} from 'react-router-dom'
-import './Login.css'
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword }  from 'firebase/auth'
-import { auth } from './Firebase'
-import {useNavigate} from 'react-router-dom'
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import './Login.css';
+import axios from './axios';
+import { useStateValue } from './StateProvider';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 function Login() {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isRegister, setIsRegister] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [, dispatch] = useStateValue();
 
-    const navigate = useNavigate()
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-
-    const singIn = (e) => {
-         e.preventDefault()
-         signInWithEmailAndPassword(auth, email, password)
-         .then((auth) => {
-           if (auth) {
-            navigate('/')
-           }
-         })
-         .catch((error) => alert(error.message))
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    
+    if (isRegister) {
+      if (password.length < 6) {
+        setError('Passwords must be at least 6 characters.');
+        return;
+      }
+      if (password !== confirmPassword) {
+        setError('Passwords do not match.');
+        return;
+      }
     }
 
-    const register = (e) => {
-        e.preventDefault()
-
-        createUserWithEmailAndPassword(auth,email, password)
-        .then((auth) => {
-            if (auth) {
-                navigate('/')
-            }
-        })
-        .catch((error) => alert(error.message))
-       
-   }
+    setLoading(true);
+    try {
+      const endpoint = isRegister ? '/auth/register' : '/auth/login';
+      const response = await axios.post(endpoint, { email, password });
+      const { token, user } = response.data;
+      localStorage.setItem('token', token);
+      dispatch({ type: 'SET_USER', user });
+      navigate('/');
+    } catch (err) {
+      setError(err.response?.data?.error || 'Something went wrong. Please try again.');
+    }
+    setLoading(false);
+  };
 
   return (
     <div className='login'>
-       <Link to="/" ><img className='login_logo' src='https://assets.aboutamazon.com/dims4/default/c7f0d8d/2147483647/strip/true/crop/6110x2047+0+0/resize/645x216!/format/webp/quality/90/?url=https%3A%2F%2Famazon-blogs-brightspot.s3.amazonaws.com%2F2e%2Fd7%2Fac71f1f344c39f8949f48fc89e71%2Famazon-logo-squid-ink-smile-orange.png' /></Link>
-       <div className='login_container'>
-            <h1>Sign-in</h1>
-            <form>
-                <h5>E-mail</h5>
-                <input 
-                    type='text'
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                /> 
+      <Link to="/" className="login_logoContainer">
+        <span className="login_logoText">
+          Tana<span className="login_logoTextShop">shop</span>
+        </span>
+      </Link>
 
-                <h5>Password</h5>
-                <input 
-                    type='password'
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+      <div className='login_container'>
+        <h1>{isRegister ? 'Create account' : 'Sign in'}</h1>
+
+        <form onSubmit={handleSubmit}>
+          <div className="login_field">
+            <label htmlFor="email">Email or mobile phone number</label>
+            <input
+              id="email"
+              type='email'
+              value={email}
+              required
+              onChange={e => setEmail(e.target.value)}
+              autoComplete="email"
+            />
+          </div>
+
+          <div className="login_field">
+            <label htmlFor="password">Password</label>
+            <div className="login_passwordInputWrapper">
+              <input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                required
+                onChange={e => setPassword(e.target.value)}
+                autoComplete={isRegister ? 'new-password' : 'current-password'}
+              />
+              <div 
+                className="login_passwordToggle" 
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </div>
+            </div>
+          </div>
+
+          {isRegister && (
+            <div className="login_field">
+              <label htmlFor="confirmPassword">Re-enter password</label>
+              <div className="login_passwordInputWrapper">
+                <input
+                  id="confirmPassword"
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  value={confirmPassword}
+                  required
+                  onChange={e => setConfirmPassword(e.target.value)}
+                  autoComplete="new-password"
                 />
+                <div 
+                  className="login_passwordToggle" 
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                </div>
+              </div>
+            </div>
+          )}
 
-                <button 
-                    type='submit'
-                    onClick={singIn}
-                    className='login_singInButton'
-                > 
-                Sign In
-                </button>
-            </form>
+          {error && <div className="login_error">{error}</div>}
 
-            <p>
-                By signing-in you agree to the AMAZON FAKE CLONE cnditions of Use Sale, Please see our Privacy Notice, our Cookies Notise our Interest-Based Ads Notice.
-            </p>
+          <button type='submit' className='login_signInButton' disabled={loading}>
+            {loading ? 'Please wait...' : (isRegister ? 'Create your Tanashop account' : 'Continue')}
+          </button>
+        </form>
 
-            <button onClick={register} className='login_registerButton'>
-                Create your Amazon Acconut
-            </button>
-       </div>
+        {!isRegister && (
+          <p className="login_terms">
+            By continuing, you agree to Tanashop's{' '}
+            <a href="#conditions">Conditions of Use</a> and{' '}
+            <a href="#privacy">Privacy Notice</a>.
+          </p>
+        )}
+
+        <div className="login_divider">
+          <span>New to Tanashop?</span>
+        </div>
+
+        <button
+          className='login_registerButton'
+          onClick={() => { setIsRegister(!isRegister); setError(''); }}
+        >
+          {isRegister ? '← Back to Sign In' : 'Create your Tanashop account'}
+        </button>
+      </div>
     </div>
-  )
+  );
 }
 
-export default Login
+export default Login;

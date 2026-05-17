@@ -1,53 +1,76 @@
-import React, { useEffect, useState } from 'react'
-import './Orders.css'
-import { useStateValue } from './StateProvider'
-import Order from "./Order"
-import { db } from './Firebase'
-import { collection, doc, query, orderBy, onSnapshot } from 'firebase/firestore'
-
+import React, { useEffect, useState } from 'react';
+import './Orders.css';
+import { useStateValue } from './StateProvider';
+import Order from './Order';
+import axios from './axios';
+import { Link } from 'react-router-dom';
 
 function Orders() {
-
-  const [{basket, user}, dispatch] = useStateValue()
-  const [orders, setOrders] = useState([])
-
-
-
+  const [{ user }] = useStateValue();
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    
-    if (user?.uid) {
-      const ordersRef = collection(doc(db, 'users', user.uid), 'orders');
-      const ordersQuery = query(ordersRef, orderBy('created', 'desc'));
-  
-      onSnapshot(ordersQuery, (snapshot) => {
-        const orders = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          data: doc.data()
-        }));
-        
-        setOrders(orders);
-      });
-    } else {
-      setOrders([]);
-    }
-  
-   
+    const fetchOrders = async () => {
+      setLoading(true);
+      if (user) {
+        try {
+          const token = localStorage.getItem('token');
+          const response = await axios.get('/orders', {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          setOrders(response.data.map(order => ({
+            id: order.id,
+            data: {
+              basket: typeof order.basket === 'string' ? JSON.parse(order.basket) : order.basket,
+              amount: order.amount,
+              created: order.created
+            }
+          })));
+        } catch (error) {
+          console.error('Error fetching orders:', error);
+          setOrders([]);
+        }
+      } else {
+        setOrders([]);
+      }
+      setLoading(false);
+    };
 
+    fetchOrders();
   }, [user]);
 
   return (
     <div className='orders'>
-      <h1>Your Orders</h1>
-      <div className='orders_order'>
-          {console.log(orders)}
-        {orders?.map((order)=> (
-            <Order order={order}/>
-          
-        ))}
+      <div className="orders_header">
+        <h1>Your Orders</h1>
+        {orders.length > 0 && (
+          <span className="orders_count">{orders.length} order{orders.length !== 1 ? 's' : ''} placed</span>
+        )}
       </div>
+
+      {loading ? (
+        <div className="orders_loading">Loading your orders...</div>
+      ) : !user ? (
+        <div className="orders_signIn">
+          <p>Please sign in to see your orders.</p>
+          <Link to="/login" className="orders_signInBtn">Sign In</Link>
+        </div>
+      ) : orders.length === 0 ? (
+        <div className="orders_empty">
+          <h2>You haven't placed any orders yet.</h2>
+          <p>When you place an order, it will appear here. You can track your packages, return items, and more.</p>
+          <Link to="/" className="orders_shopBtn">Continue Shopping</Link>
+        </div>
+      ) : (
+        <div className='orders_list'>
+          {orders.map((order) => (
+            <Order key={order.id} order={order} />
+          ))}
+        </div>
+      )}
     </div>
-  )
+  );
 }
 
-export default Orders
+export default Orders;

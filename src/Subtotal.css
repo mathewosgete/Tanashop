@@ -1,31 +1,56 @@
 .subtotal {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 380px;
-    height: 130px;
-    padding: 40px;
-    background-color: #f3f3f3;
-    border: 1px solid #dddddddd;
-    border-radius: 3px;
-    
+  background: white;
+  border: 1px solid #d5d9d9;
+  border-radius: 8px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
-.subtotal_gift {
-    display: flex;
-    align-items: center;
-    margin-top: 13px;
+
+.subtotal_freeDelivery {
+  font-size: 14px;
+  color: #007600;
 }
-.subtotal_gift > input {
-    margin-right: 5px;
+
+.subtotal_selectNote {
+  color: #007185;
 }
-.subtotal > button {
-    background: #f0c14b;
-    border-radius: 2px;
-    width: 100%;
-    height: 30px;  
-    border: 1px solid;
-    margin-top: 10px;
-    border-color: #a88734 #9c7e31 #846a29;
-    color: #111;
-    font-size: 20px;
+
+.subtotal_price {
+  font-size: 18px;
+  color: #0f1111;
+}
+
+.subtotal_amount {
+  font-weight: 700;
+}
+
+.subtotal_giftOption {
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.subtotal_checkoutBtn {
+  width: 100%;
+  padding: 10px;
+  border-radius: 20px;
+  border: 1px solid #FCD200;
+  background-color: var(--amz-button-bg);
+  cursor: pointer;
+  font-size: 14px;
+  color: #0f1111;
+  box-shadow: 0 2px 5px 0 rgba(213, 217, 217, .5);
+  transition: background-color 0.15s;
+}
+
+.subtotal_checkoutBtn:hover:not(:disabled) {
+  background-color: var(--amz-button-hover);
+}
+
+.subtotal_checkoutBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

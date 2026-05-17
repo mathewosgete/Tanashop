@@ -1,8 +1,8 @@
 # My Projects
 
-[My Amazon Project full stack cloned live link](https://yonas-amazon-cloned.netlify.app/)
+[My Tanashop Project full stack cloned live link](https://yonas-amazon-cloned.netlify.app/)
 
-This is a brief description of my Amazon project. It is an e-commerce application that allows users to browse products, manage their shopping cart, and make secure purchases.
+This is a brief description of my Tanashop project. It is an e-commerce application that allows users to browse products, manage their shopping cart, and make secure purchases.
 
 ### Progress
 I have made significant progress while working on this project, focusing on creating a user-friendly experience and ensuring the application is secure and reliable.
@@ -40,5 +40,5 @@ I have made significant progress while working on this project, focusing on crea
 The backend is deployed on another hosting website, ensuring seamless performance and reliability. This setup allows for efficient handling of user requests and data management.
 
 ### Conclusion
-This Amazon project showcases my skills in full-stack development and my ability to create robust applications. I am continuously looking to improve and expand upon the features in this project.
+This Tanashop project showcases my skills in full-stack development and my ability to create robust applications. I am continuously looking to improve and expand upon the features in this project.
 

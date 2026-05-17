@@ -1,42 +1,81 @@
-import React from 'react'
-import './Product.css'
-import { useStateValue } from './StateProvider'
+import React from 'react';
+import './Product.css';
+import { Link, useNavigate } from 'react-router-dom';
+import { useStateValue } from './StateProvider';
 
-function Product({id, title, image, price, rating}) {
+function Product({ id, title, image, price, rating, reviews, isPrime }) {
+  const [, dispatch] = useStateValue();
+  const navigate = useNavigate();
 
-  const [{basket}, dispatch] = useStateValue()
-  const addToBasket = () => {
-      dispatch({
-        type: 'ADD_TO_BASKET',
-        item: {
-          id,
-          title,
-          image,
-          price,
-          rating
-      }
-      })
-  }
+  const addToBasket = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const item = { id, title, image, price, rating, quantity: 1 };
+    dispatch({ type: 'ADD_TO_BASKET', item });
+    navigate('/added-to-cart', { state: { product: item } });
+  };
+
+  const priceWhole = Math.floor(price);
+  const priceFraction = (price % 1).toFixed(2).substring(2);
+
+  const ratingStars = (r) => {
+    const full = Math.floor(r);
+    const stars = [];
+    for (let i = 0; i < 5; i++) {
+      stars.push(
+        <span key={i} className={i < full ? 'product_starFull' : 'product_starEmpty'}>★</span>
+      );
+    }
+    return stars;
+  };
 
   return (
     <div className='product'>
-      <div className='product_info'>
-        <p>{title}</p>
-        <p className='product_price'>
-            <small>$</small>
-            <strong>{price}</strong>
-        </p>
-        <div className='product_rating'>
-            {Array(rating).fill().map(() => {
-               return <p>⭐</p>
-            })}
+      <Link to={`/product/${id}`} className="product_imageLink">
+        <div className='product_imageContainer'>
+          <img className='product_image' src={image} alt={title} />
         </div>
+      </Link>
+
+      <div className='product_info'>
+        <Link to={`/product/${id}`} className="product_titleLink">
+          <h2 className='product_title'>{title}</h2>
+        </Link>
+
+        <div className="product_rating">
+          <div className="product_stars">{ratingStars(rating)}</div>
+          {reviews && (
+            <span className="product_reviews">
+              {reviews.toLocaleString()}
+            </span>
+          )}
+        </div>
+
+        <div className="product_priceRow">
+          <div className="product_priceBlock">
+            <span className="product_priceSymbol">$</span>
+            <span className="product_priceWhole">{priceWhole}</span>
+            <span className="product_priceFraction">{priceFraction}</span>
+          </div>
+        </div>
+
+        {isPrime && (
+          <div className="product_prime">
+            <img
+              src="https://m.media-amazon.com/images/G/01/prime/marketing/slashPrime/amazon-prime-delivery-checkmark._TTD_.png"
+              alt="Prime"
+              className="product_primeImg"
+            />
+            <span>FREE Prime Delivery</span>
+          </div>
+        )}
       </div>
-      
-      <img src={image} alt='' />
-      <button onClick={addToBasket}>Add to Basket</button>
+
+      <button className="product_addBtn" onClick={addToBasket}>
+        Add to Cart
+      </button>
     </div>
-  )
+  );
 }
 
-export default Product
+export default Product;
