@@ -10,7 +10,7 @@ const paymentRoutes = require('./routes/payments');
 
 const app = express();
 
-// CORS — allow Vercel frontend in production, everything in dev
+// CORS — allow production frontend origin in production, everything in dev
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production'
     ? process.env.FRONTEND_URL
@@ -20,7 +20,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Health check endpoint (required by Render)
+// Health check endpoint for service monitoring and uptime checks
 app.get('/health', (req, res) => res.status(200).json({ status: 'ok' }));
 
 
